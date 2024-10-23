@@ -1,0 +1,4 @@
+id;column_combination;accuracy;f1_score_class_0;f1_score_class_1;anonymization
+0;;0.7539429945540703;0.7366588449019756;0.7690980288046724;no
+1;Age_manipuliert, Sex_manipuliert, Income_manipuliert, Education_manipuliert;0.7540844472734989;0.7385910833771896;0.767844027508847;basic
+2;Age_manipuliert, Sex_manipuliert, Income_manipuliert, Education_manipuliert, BMI_manipuliert, HighBP_manipuliert, HighChol_manipuliert, Stroke_manipuliert, HeartDiseaseorAttack_manipuliert;0.7479312539783577;0.7325930372148859;0.7616053511705686;moderate

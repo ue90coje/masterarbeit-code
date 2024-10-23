@@ -1,0 +1,4 @@
+id;column_combination;accuracy;f1_score_class_0;f1_score_class_1
+0;age_manipuliert, sex_manipuliert, race_manipuliert;0.8720840243228303;0.9179607175778204;0.709806872335089
+1;age_manipuliert, sex_manipuliert, race_manipuliert, native-country_manipuliert;0.8694306246545053;0.9161281159008592;0.7054128211524071
+2;age_manipuliert, sex_manipuliert, race_manipuliert, native-country_manipuliert, capital-gain_manipuliert, capital-loss_manipuliert;0.8656716417910447;0.9137502662028821;0.6964776417686735

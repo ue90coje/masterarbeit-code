@@ -1,0 +1,4 @@
+id;column_combination;accuracy;f1_score_class_0;f1_score_class_1;anonymization
+0;;0.8702045328911;0.9163460168163032;0.7105522682445758;no
+1;age_manipuliert, sex_manipuliert, race_manipuliert;0.8707573244886678;0.9168267520455352;0.7102850061957867;basic
+2;age_manipuliert, sex_manipuliert, race_manipuliert, native-country_manipuliert, education_manipuliert, occupation_manipuliert;0.8683250414593698;0.915752988611445;0.6987098406273715;moderate

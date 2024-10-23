@@ -1,0 +1,7 @@
+id;column_combination;accuracy;f1_score_class_0;f1_score_class_1;anonymization
+0;;0.8710889994472084;0.9169397350049864;0.7122408687068115;no
+1;age_manipuliert, sex_manipuliert, race_manipuliert;0.8682144831398563;0.915448999858136;0.7014028056112224;basic
+2;age_manipuliert, sex_manipuliert, race_manipuliert, native-country_manipuliert, education_manipuliert, occupation_manipuliert;0.834604754007739;0.8946478873239436;0.6154241645244216;moderate
+3;age_manipuliert, sex_manipuliert, race_manipuliert, native-country_manipuliert, education_manipuliert, occupation_manipuliert, marital-status_manipuliert, capital-gain_manipuliert, capital-loss_manipuliert, hours-per-week_manipuliert;0.7961304588170259;0.8688291364347702;0.5426587301587302;strong
+4;age_manipuliert, sex_manipuliert, race_manipuliert;0.8682144831398563;0.915448999858136;0.7014028056112224;basic
+5;age_manipuliert, fnlwgt_manipuliert, capital-gain_manipuliert, capital-loss_manipuliert, hours-per-week_manipuliert, sex_manipuliert, workclass_manipuliert, education_manipuliert, marital-status_manipuliert, occupation_manipuliert, relationship_manipuliert, race_manipuliert, native-country_manipuliert;0.7914870093974572;0.8725675675675676;0.4267477203647416;complete
