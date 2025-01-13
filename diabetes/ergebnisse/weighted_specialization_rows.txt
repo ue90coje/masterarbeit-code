@@ -1,0 +1,5 @@
+Anonymisierung: no | Train: 56553 | Test: 14139
+Anonymisierung: basic | Train: 84662 | Test: 21111
+Anonymisierung: moderate | Train: 428265 | Test: 107282
+Anonymisierung: strong | Train: 4886676 | Test: 1217080
+Anonymisierung: complete | Train: 16472768 | Test: 4130518

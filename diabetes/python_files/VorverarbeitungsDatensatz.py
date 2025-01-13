@@ -3,10 +3,7 @@
 #-ersetze_durch_mittelwert: ersetzt generalisierte Werte eines Intervalls durch den mittleren Wert des Intervalls
 #-erstelle_neue_zeilen: erstellt neue Zeilen mit konkreten Werten für die Generalisierten Werte
 
-#importiere Age. Die Datei Age.py liegt in dem Ordner columns
-
 import pandas as pd
-import numpy as np
 from python_files.spalten.Spalten import Spalten
 import os
 
@@ -28,7 +25,7 @@ class VorverarbeitungsDatensatz:
                     self.df.at[index, column.value.name] = new_value
             #self.df[column.value.name] = self.df[column.value.name].astype(int)
 
-    def erstelle_neue_zeilen_v2(self, columns: list[Spalten]):
+    def erstelle_neue_zeilen(self, columns: list[Spalten]):
         for column in columns:
             new_rows = []
 

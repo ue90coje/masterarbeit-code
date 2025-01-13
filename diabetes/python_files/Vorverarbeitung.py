@@ -1,5 +1,4 @@
 import pandas as pd
-import numpy as np
 from python_files.spalten.Spalten import Spalten
 from python_files.VorverarbeitungsDatensatz import VorverarbeitungsDatensatz
 import os
@@ -9,46 +8,72 @@ from sklearn.model_selection import train_test_split
 
 
 #enum mit drei szenarien
-class Szenario(Enum):
-    Szenario1 = "weighted specialization"
-    Szenario2 = "specialization"
-    Szenario3 = "forced generalization"
-    Szenario4 = "maximum certainty"
-    Szenario5 = "no preprocessing"
-    Szenario6 = "numerical specialization"
+class Preparing_Method(Enum):
+    weighted_specialization = "weighted specialization"
+    specialization = "specialization"
+    forced_generalization = "forced generalization"
+    weighted_specialization_highest_confidence = "highest confidence"
+    no_preprocessing = "no preprocessing"
+    extended_weighted_specialization = "extended weighted specialization"
+    complete_weighted_specialization = "complete weighted specialization"
+    complete_forced_generalization = "complete forced generalization"
+    complete_no_preprocessing = "complete no preprocessing"
 
 
 NUMERICAL_COLUMNS = [Spalten.AGE, Spalten.BMI, Spalten.GEN_HLTH, Spalten.MENT_HLTH, Spalten.PHYS_HLTH, Spalten.EDUCATION, Spalten.INCOME]
 
 
-def prepare_generalized_data():
-    manipulated_data_train = pd.read_csv('dataset/manipuliert/diabetes_train.csv')
-    manipulated_data_test = pd.read_csv('dataset/manipuliert/diabetes_test.csv')
-    df = pd.concat([manipulated_data_train, manipulated_data_test])
-    df = df.reset_index(drop=True)
+def prepare_specialization(complete_anonymization: bool):
+    df = get_anonymized_data(complete_anonymization)
+    folder_name = "komplett_spezialisiert" if complete_anonymization else "spezialisiert"
+    specialize_data_and_save_to_csv(df, folder_name)
 
-    print("Begin Preparation")
-    prepare_columns_and_save_to_csv(df.copy())
-    print("Data prepared for Specialization")
-    preprocess_data_to_highest_privacy_level(df.copy())
-    print("Data prepared for Forced Generalization")
-    specialize_data_with_numerical(df.copy())
-    print("Finished Preparation")
+def prepare_forced_generalization(complete_anonymization: bool):
+    df = get_anonymized_data(complete_anonymization)
+    folder_name = "komplett_zwangsgeneralisiert" if complete_anonymization else "zwangsgeneralisiert"
+    preprocess_data_to_highest_privacy_level(df, folder_name)
+
+def prepare_extended_specialization(complete_anonymization: bool):
+    df = get_anonymized_data(complete_anonymization)
+    folder_name = "komplett_erweitert_spezialisiert" if complete_anonymization else "erweitert_spezialisiert"
+    specialize_data_extended_and_save_to_csv(df, folder_name)
 
 
-def specialize_data_with_numerical(df: pd.DataFrame):
+
+def get_anonymized_data(complete_anonymization: bool):
+    if not complete_anonymization:
+        manipulated_data_train = pd.read_csv('dataset/anonymisiert/diabetes_train.csv')
+        manipulated_data_test = pd.read_csv('dataset/anonymisiert/diabetes_test.csv')
+        df = pd.concat([manipulated_data_train, manipulated_data_test])
+        df = df.reset_index(drop=True)
+        return df
+    else:
+        manipulated_data_train = pd.read_csv('dataset/komplett_anonymisiert/diabetes_train.csv')
+        manipulated_data_test = pd.read_csv('dataset/komplett_anonymisiert/diabetes_test.csv')
+        df = pd.concat([manipulated_data_train, manipulated_data_test])
+        df = df.reset_index(drop=True)
+        return df
+
+
+#daten für erweiterte spezialisierung vorverarbeiten
+#Für numerische Spalte AGE werden zusaätzlich neue Einträge erzeugt
+def specialize_data_extended_and_save_to_csv(df: pd.DataFrame, folder_name: str):
     #Gehe alle Enums Spalten durch
     for column in Spalten:
         #betrachte nur die Spalten record_id und aktuelle Spalte
         actual_df = df[["record_id", column.value.name]]
         vorverarbeitungs_datensatz = VorverarbeitungsDatensatz(actual_df)
-        vorverarbeitungs_datensatz.erstelle_neue_zeilen_v2([column])
+        if column in NUMERICAL_COLUMNS and column != Spalten.AGE:
+            vorverarbeitungs_datensatz.ersetze_durch_mittelwert([column])
+        else:
+            vorverarbeitungs_datensatz.erstelle_neue_zeilen([column])
         #speichere das Dataframe als CSV
-        vorverarbeitungs_datensatz.write_to_csv("dataset/szenario6/" + column.value.name + "_vorverarbeitet.csv")
+        vorverarbeitungs_datensatz.write_to_csv("dataset/" + folder_name + "/" + column.value.name + "_vorverarbeitet.csv")
+        print(f"Dataframe {column.value.name} wurde vorverarbeitet und gespeichert")
 
 
-#daten für szenario 1 und 2 vorverarbeiten
-def prepare_columns_and_save_to_csv(df: pd.DataFrame):
+#daten für spezialisierung vorverarbeiten
+def specialize_data_and_save_to_csv(df: pd.DataFrame, folder_name: str):
     #Gehe alle Enums Spalten durch
     for column in Spalten:
         #betrachte nur die Spalten record_id und aktuelle Spalte
@@ -57,31 +82,35 @@ def prepare_columns_and_save_to_csv(df: pd.DataFrame):
         if column in NUMERICAL_COLUMNS:
             vorverarbeitungs_datensatz.ersetze_durch_mittelwert([column])
         else:
-            vorverarbeitungs_datensatz.erstelle_neue_zeilen_v2([column])
+            vorverarbeitungs_datensatz.erstelle_neue_zeilen([column])
         #speichere das Dataframe als CSV
-        vorverarbeitungs_datensatz.write_to_csv("dataset/szenario1/" + column.value.name + "_vorverarbeitet.csv")
+        vorverarbeitungs_datensatz.write_to_csv("dataset/" + folder_name + "/" + column.value.name + "_vorverarbeitet.csv")
+        print(f"Dataframe {column.value.name} wurde vorverarbeitet und gespeichert")
 
-def preprocess_data_to_highest_privacy_level(df: pd.DataFrame):
+
+#zwangsgeneralisierte Daten vorverarbeiten
+def preprocess_data_to_highest_privacy_level(df: pd.DataFrame, folder_name: str):
     #Gehe alle Enums Spalten durch
     for column in Spalten:
         for index, row in df.iterrows():
             df.at[index, column.value.name] = column.value.get_highest_privacy_value(row[column.value.name])
+        print(f"Spalte {column.value.name} wurde vorverarbeit")
     
-    write_to_csv( df, "dataset/szenario3/vorverarbeitet.csv")
+    write_to_csv(df, "dataset/" + folder_name + "/vorverarbeitet.csv")
 
 def write_to_csv(data, path:str):
     #split path in directory and filename
     outdir = os.path.dirname(path)
 
     if not os.path.exists(outdir):
-        os.mkdir(outdir)
+        os.makedirs(outdir)
 
     data.to_csv(path, index=False)
 
-def get_data_analysis(anonymization: Anonymization):
-    df_train = pd.read_csv('dataset/manipuliert/diabetes_train.csv')
+def get_anonymized_data_analysis(anonymization: Anonymization):
+    df_train = pd.read_csv('dataset/anonymisiert/diabetes_train.csv')
     df_train.drop(columns=['record_id', "Diabetes_binary"], inplace=True)
-    df_test = pd.read_csv('dataset/manipuliert/diabetes_test.csv')
+    df_test = pd.read_csv('dataset/anonymisiert/diabetes_test.csv')
     df_test.drop(columns=['record_id', "Diabetes_binary"], inplace=True)
     total_features = len(df_train.columns)
     total_generalized_train = 0
